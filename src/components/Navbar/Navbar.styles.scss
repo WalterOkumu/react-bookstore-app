@@ -1,0 +1,71 @@
+nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: #fff;
+
+  .flex-start {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+
+    .logo {
+      font-size: 1.875rem;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: #0290ff;
+      cursor: pointer;
+    }
+
+    .nav-link {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1.5rem;
+
+      .nav-link-item-books {
+        font-size: 0.813rem;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: 1.9px;
+        color: #121212;
+        cursor: pointer;
+      }
+
+      .nav-link-item-categories {
+        opacity: 0.5;
+        font-size: 0.813rem;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: 1.9px;
+        color: #121212;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .flex-end {
+    .profile {
+      border: solid 1px #e8e8e8;
+      border-radius: 50%;
+      padding: 0.5rem;
+      color: #0290ff;
+
+      .material-symbols-outlined {
+        fill: blue;
+        font-weight: 400;
+        opacity: 48;
+      }
+    }
+  }
+}
