@@ -1,12 +1,12 @@
 // categories.js
 
 // Actions
-const CHECK_STATUS = 'CREATE';
+const CHECK_STATUS = 'react-bookstore-app/categories/CREATE';
 
 const initialState = [];
 
 // Reducer
-const categoriesReducer = (state = initialState, action = {}) => {
+const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case CHECK_STATUS: {
       return 'Under Construction';
@@ -21,4 +21,4 @@ const categoriesReducer = (state = initialState, action = {}) => {
 // Action Creators
 export const checkStatus = () => ({ type: CHECK_STATUS });
 
-export default categoriesReducer;
+export default reducer;
