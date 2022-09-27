@@ -1,51 +1,29 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DisplayBook from '../DisplayBook';
 import './Home.styles.scss';
 
 const Home = () => {
   const navigation = useNavigate();
-  const [books, setBooks] = useState([
-    {
-      title: 'Hunger Games',
-      category: 'Action',
-      author: 'Suzanne Collins',
-      completed: 64,
-      currentChapter: 'Chapter 17',
-    },
-    {
-      title: 'Dune',
-      category: 'Science Fiction',
-      author: 'Frank Herbert',
-      completed: 8,
-      currentChapter: 'Chapter 3: \u0027A Lesson Learned\u0027',
-    },
-    {
-      title: 'Capital in the Twenty-First Century',
-      category: 'Economy',
-      author: 'Suzanne Collins',
-      completed: 0,
-      currentChapter: 'Introduction',
-    },
-  ]);
+
+  const bookList = useSelector((state) => state.books);
 
   const handleAddBook = () => {
-    navigation('/books/add-book');
+    navigation('/add-book');
   };
 
   return (
     <div className="home-container">
       <ul className="book-list">
-        <li className="book-item">
-          <DisplayBook book={books[0]} />
-        </li>
-        <li className="book-item">
-          <DisplayBook book={books[1]} />
-        </li>
-        <li className="book-item">
-          <DisplayBook book={books[2]} />
-        </li>
+        {
+          bookList.map((book) => (
+            <li key={book.id} className="book-item">
+              <DisplayBook book={book} />
+            </li>
+          ))
+        }
       </ul>
       <hr />
       <div className="add-book-container">
