@@ -18,7 +18,7 @@ By building this application, you will learn how to use React and Redux.
 
 ## Demo
 
-- You can view the demo link here - [Demo Link]()
+- You can view the demo link here - [Demo Link](https://okumu-react-bookstore.netlify.app)
 
 ## Getting Started
 
