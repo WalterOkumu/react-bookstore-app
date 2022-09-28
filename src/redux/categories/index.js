@@ -1,24 +1,37 @@
+import { createSlice } from '@reduxjs/toolkit';
 // categories.js
 
-// Actions
-const CHECK_STATUS = 'react-bookstore-app/categories/CREATE';
+const initialState = [
+  { id: 0, category: 'Literary Fiction' },
+  { id: 1, category: 'Mystery' },
+  { id: 2, category: 'Thriller' },
+  { id: 3, category: 'Horror' },
+  { id: 4, category: 'Historical' },
+  { id: 5, category: 'Romance' },
+  { id: 6, category: 'Western' },
+  { id: 7, category: 'Bildungsroman' },
+  { id: 8, category: 'Speculative Fiction' },
+  { id: 9, category: 'Science Fiction' },
+  { id: 10, category: 'Fantasy' },
+  { id: 11, category: 'Dystopian' },
+  { id: 12, category: 'Magical Realism' },
+  { id: 13, category: 'Realist Literature' },
+];
 
-const initialState = [];
+const categoriesSlice = createSlice({
+  name: 'categories',
+  initialState,
+  reducers: {
+    CATEGORY: {
+      reducer(state, action) {
+        state.push(action.payload);
+      },
+    },
+  },
+});
 
-// Reducer
-const reducer = (state = initialState, action = {}) => {
-  switch (action.type) {
-    case CHECK_STATUS: {
-      return 'Under Construction';
-    }
+export const selectAllCategories = (state) => state.categories;
 
-    default: {
-      return state;
-    }
-  }
-};
+export const { CATEGORY } = categoriesSlice.actions;
 
-// Action Creators
-export const checkStatus = () => ({ type: CHECK_STATUS });
-
-export default reducer;
+export default categoriesSlice.reducer;

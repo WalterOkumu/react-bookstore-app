@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import ProgressBar from 'react-customizable-progressbar';
+import ReactLoading from 'react-loading';
 import { deleteBook } from '../../redux/books';
 import './DisplayBook.styles.scss';
 
@@ -11,12 +12,35 @@ const DisplayBook = ({
   },
 }) => {
   const dispatch = useDispatch();
+  const [requestStatus, setRequestStatus] = useState('idle');
 
   const handleDelete = (id) => {
+    setRequestStatus('loading');
     dispatch(deleteBook(id));
+
+    setTimeout(() => {
+      setRequestStatus('idle');
+      const { location } = window;
+      location.reload();
+    }, 4000);
   };
 
-  return (
+  const renderLoading = () => {
+    const spinnerType = 'spinningBubbles';
+    const spinnerColor = '#0290ff';
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <ReactLoading
+          type={spinnerType}
+          color={spinnerColor}
+          height="10%"
+          width="10%"
+        />
+      </div>
+    );
+  };
+
+  const renderContainer = () => (
     <div className="container group">
       <div className="left">
         <p className="category">{category}</p>
@@ -37,11 +61,12 @@ const DisplayBook = ({
           progress={completed}
           strokeWidth={5}
           strokeColor="#379cf6"
+          trackStrokeColor="grey"
           strokeLinecap="round"
           trackStrokeWidth={5}
         />
         <div className="indicator">
-          {completed}
+          {completed === undefined ? 0 : completed}
           % Completed
         </div>
       </div>
@@ -51,6 +76,14 @@ const DisplayBook = ({
         <button type="button" className="buttons">UPDATE PROGRESS</button>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {
+        requestStatus === 'loading' ? renderLoading() : renderContainer()
+      }
+    </>
   );
 };
 
