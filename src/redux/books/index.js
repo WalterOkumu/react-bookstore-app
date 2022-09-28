@@ -1,77 +1,114 @@
 // books.js
-import { v4 as uuidv4 } from 'uuid';
-// Actions
-const CREATE = 'react-bookstore-app/books/CREATE';
-const UPDATE = 'react-bookstore-app/books/UPDATE';
-const DELETE = 'react-bookstore-app/books/DELETE';
+import axios from 'axios';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const initialState = [
-  {
-    id: uuidv4().split('-')[4],
-    title: 'Hunger Games',
-    category: 'Action',
-    author: 'Suzanne Collins',
-    completed: 64,
-    currentChapter: 'Chapter 17',
-  },
-  {
-    id: uuidv4().split('-')[4],
-    title: 'Dune',
-    category: 'Science Fiction',
-    author: 'Frank Herbert',
-    completed: 8,
-    currentChapter: 'Chapter 3: \u0027A Lesson Learned\u0027',
-  },
-  {
-    id: uuidv4().split('-')[4],
-    title: 'Capital in the Twenty-First Century',
-    category: 'Economy',
-    author: 'Suzanne Collins',
-    completed: 0,
-    currentChapter: 'Introduction',
-  },
-];
-
-// Reducer
-const reducer = (state = initialState, action = {}) => {
-  switch (action.type) {
-    case CREATE: return [
-      ...state,
-      {
-        id: action.id,
-        title: action.title,
-        author: action.author,
-        completed: parseInt(action.completed, 10),
-        currentChapter: action.currentChapter,
-      },
-    ];
-
-    case UPDATE: {
-      return state;
-    }
-
-    case DELETE: {
-      return state.filter((book) => book.id !== action.id);
-    }
-
-    default: {
-      return state;
-    }
-  }
+const initialState = {
+  books: [],
+  status: 'idle',
+  error: null,
 };
 
-// Action Creators
-export const createBook = (book) => ({
-  type: CREATE,
-  id: book.id,
-  title: book.title,
-  author: book.author,
-  completed: book.completed,
-  currentChapter: book.currentChapter,
+const baseURL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const url = `${baseURL}/apps/${API_KEY}/books`;
+
+const headers = {
+  'Content-Type': 'application/json',
+};
+
+export const loadBooks = createAsyncThunk('books/loadBooks', async () => {
+  const books = await axios.get(url)
+    .then((response) => response.data)
+    .catch((error) => {
+      throw new Error(error);
+    });
+  return books;
 });
 
-export const deleteBook = (id) => ({ type: DELETE, id });
+export const addNewBook = createAsyncThunk('books/addNewBook', async (data) => {
+  try {
+    await axios.post(url, JSON.stringify(data), { headers })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw new Error(error);
+      });
 
-export const updateBook = (book) => ({ type: UPDATE, book });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
-export default reducer;
+export const deleteBook = createAsyncThunk('books/deleteBook', async (id) => {
+  try {
+    await axios.delete(`${url}/${id}`)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw new Error(error);
+      });
+
+    return id;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const generateObj = (data) => {
+  const keysList = Object.keys(data);
+  const myList = [];
+  for (let i = 0; i < keysList.length; i += 1) {
+    myList[i] = {
+      id: keysList[i],
+      author: data[keysList[i]][0].author,
+      title: data[keysList[i]][0].title,
+      category: data[keysList[i]][0].category,
+    };
+  }
+  return myList;
+};
+
+const booksSlice = createSlice({
+  name: 'books',
+  initialState,
+  reducers: {
+    ADD_BOOK: {
+      reducer(state, { payload }) {
+        state.books.push(payload);
+      },
+      prepare(title, author, category) {
+        return {
+          payload: {
+            title,
+            author,
+            category,
+          },
+        };
+      },
+    },
+    DELETE_BOOK: {
+      reducer(state, { payload }) {
+        return state.books[payload.id];
+      },
+    },
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(loadBooks.pending, (state) => ({ ...state, status: 'loading' }))
+
+      .addCase(loadBooks.fulfilled, (state, { payload }) => ({ ...state, status: 'succeeded', books: payload }))
+
+      .addCase(loadBooks.rejected, (state, action) => ({ ...state, status: 'failed', error: action.error.message }))
+
+      .addCase(deleteBook.fulfilled, (state, { payload }) => ({ ...state, status: 'succeeded', delete: payload.item_id }))
+
+      .addCase(addNewBook.fulfilled, (state, { payload }) => ({ ...state, status: 'succeeded', books: generateObj(payload) }));
+  },
+});
+
+export const getAllBooks = (state) => state.books.books;
+export const getStatus = (state) => state.books.status;
+export const getError = (state) => state.books.error;
+
+export const { ADD_BOOK, DELETE_BOOK } = booksSlice.actions;
+
+export default booksSlice.reducer;

@@ -1,17 +1,30 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { checkStatus } from '../../redux/categories';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectAllCategories } from '../../redux/categories';
+import './Categories.styles.scss';
 
 const Categories = () => {
-  const dispatch = useDispatch();
-  const status = useSelector((state) => state.categories);
+  const [category, setCategory] = useState([]);
 
+  const data = useSelector(selectAllCategories);
+
+  const handleCheckStatus = () => {
+    setCategory(data);
+  };
   return (
-    <div>
-      <button type="button" onClick={() => { dispatch(checkStatus()); }}>
+    <div className="category-container">
+      <button type="button" onClick={handleCheckStatus}>
         Check status
       </button>
-      <h4>{status}</h4>
+      <ol className="category-list">
+        {
+          category.map((data) => (
+            <li key={data.id} className="list-item">
+              {data.category}
+            </li>
+          ))
+        }
+      </ol>
     </div>
   );
 };
